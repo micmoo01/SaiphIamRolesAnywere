@@ -9,6 +9,8 @@ namespace SaiphIamRolesAnywhere
 {
     public static class Utility
     {
+        private static readonly Regex regionReg = new Regex(@"[a-z]{2}\-([a-z]+\-)+\d{1}");
+
         /// <summary>
         /// Created because Convert.ToHexString is not available in .netstandard 2.0  
         /// </summary>
@@ -30,7 +32,14 @@ namespace SaiphIamRolesAnywhere
         /// </summary>
         public static string ExtractRegion(string arn)
         {
-            return "us-east-1";
+            if (string.IsNullOrEmpty(arn))
+                return "";
+
+            var matches = regionReg.Matches(arn);
+            if (matches.Count < 1)
+                return "";
+
+            return matches[0].Value;
         }
 
         /// <summary>
