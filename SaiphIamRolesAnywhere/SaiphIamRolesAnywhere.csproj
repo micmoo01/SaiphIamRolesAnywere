@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <Title>IAM RoleAnywhere Library</Title>
+    <Authors>Dylan Bartley (d.bartley44@gmail.com)</Authors>
+    <Company>Saiph Software</Company>
+    <PackageProjectUrl>https://github.com/dylanbartley/SaiphIamRolesAnywere</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/dylanbartley/SaiphIamRolesAnywere</RepositoryUrl>
+    <RepositoryType>github</RepositoryType>
+    <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BouncyCastle.NetCore" Version="2.2.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="8.0.0" />
+    <PackageReference Include="System.Text.Json" Version="7.0.3" />
+  </ItemGroup>
+
+</Project>
