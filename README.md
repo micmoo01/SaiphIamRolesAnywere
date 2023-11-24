@@ -16,7 +16,7 @@ Currently only RSA2048 private keys are supported.
 ### Acquire Certificate and Private Key
 from PFX certificate file
 > [!NOTE]
-> file should be password protected.
+> file should NOT be password protected.
 ```
 var pfxPath = Path.GetFullPath("Res\\testcert.pfx");
 var (rsaPrivateKey, certificate) = CertificateProvider.ImportPfx(pfxPath);
