@@ -1,9 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
+﻿using Org.BouncyCastle.OpenSsl;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace SaiphIamRolesAnywhere.DI
@@ -27,8 +24,11 @@ namespace SaiphIamRolesAnywhere.DI
     {
         const string PFX_EXTENSION = ".pfx";
 
-        internal RolesAnywhereServiceParams Params { get; set; }
-
+        public RolesAnywhereServiceParams Params { get; set; }
+        /// <summary>
+        /// Password finder should be implemented by client to retrieve private keys
+        /// </summary>
+        public IPasswordFinder PasswordFinder { get; set; } = new MyPasswordFinder();
         public async Task<AwsCredential> GetAwsCredentials()
         {
             RSA rsaPrivateKey;
@@ -37,9 +37,9 @@ namespace SaiphIamRolesAnywhere.DI
             // get certificate and key
             var file = new System.IO.FileInfo(Params.CertificatePath);
             if (file.Extension == PFX_EXTENSION)
-                (rsaPrivateKey, certificate) = CertificateProvider.ImportPfx(file.FullName);
+                (rsaPrivateKey, certificate) = CertificateProvider.ImportPfx(file.FullName, PasswordFinder);
             else
-                (rsaPrivateKey, certificate) = CertificateProvider.FromPemFiles(Params.PrivateKeyPath, file.FullName);
+                (rsaPrivateKey, certificate) = CertificateProvider.FromPemFiles(Params.PrivateKeyPath, file.FullName, PasswordFinder);
 
             var request = CanonicalRequest.Create(
                 certificate,
@@ -53,4 +53,10 @@ namespace SaiphIamRolesAnywhere.DI
             return authRes.CredentialSet[0].Credentials;
         }
     }
+
+	public class MyPasswordFinder : IPasswordFinder
+	{
+		public char[] GetPassword() => null;
+	}
+
 }
