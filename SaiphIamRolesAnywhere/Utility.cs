@@ -68,7 +68,7 @@ namespace SaiphIamRolesAnywhere
 
         public static string Sign(RSA rsaPrivateKey, string input)
         {
-            using (rsaPrivateKey)
+            //using (rsaPrivateKey)
                 return HexEncode(
                         rsaPrivateKey.SignData(Encoding.UTF8.GetBytes(input), HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1))
                     .ToLower();

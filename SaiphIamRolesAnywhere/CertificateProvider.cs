@@ -1,7 +1,7 @@
 ﻿using Org.BouncyCastle.Crypto.Parameters;
 using Org.BouncyCastle.OpenSsl;
 using Org.BouncyCastle.Security;
-using System;
+using SaiphIamRolesAnywhere.DI;
 using System.IO;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -9,7 +9,7 @@ using System.Text;
 
 namespace SaiphIamRolesAnywhere
 {
-	public static class CertificateProvider
+    public static class CertificateProvider
 	{
 		public static IPasswordFinder NoPassword = new NullPassword();
 		public static (RSA, X509Certificate) ImportPfx(string certificatePath) => ImportPfx(certificatePath, NoPassword);
@@ -38,6 +38,27 @@ namespace SaiphIamRolesAnywhere
 			rsa.ImportParameters(rsaParams);
 
 			return (rsa, cert);
+		}
+
+      public static (RSA, X509Certificate) FromStore(string thumbprint, IPasswordFinder finder)
+		{
+         X509Store store = new X509Store(StoreName.Root, StoreLocation.LocalMachine);
+			store.Open(OpenFlags.ReadOnly);
+			try
+			{
+				X509Certificate2Collection cers = store.Certificates.Find(X509FindType.FindByThumbprint, thumbprint, false);
+				if (cers.Count == 0)
+				{
+					throw new CertificateNotFoundException(thumbprint);
+				}
+				var cert = cers[0];
+				var rsa = cert.GetRSAPrivateKey();
+				return (rsa, cert);
+			}
+			finally
+			{
+				store.Close();
+			}
 		}
 	}
 	public class NullPassword : IPasswordFinder
